@@ -1,34 +1,42 @@
-import { StyleSheet, Text, View } from "react-native";
+import React from 'react';
+import { View, StyleSheet, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import FloorList from '../components/FloorList';
+import floors from '../data/floors';
 
-export default function Page() {
+export default function Index() {
   return (
-    <View style={styles.container}>
-      <View style={styles.main}>
-        <Text style={styles.title}>Hello World</Text>
-        <Text style={styles.subtitle}>This is the first page of your app.</Text>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Laundrify</Text>
+        <Text style={styles.headerSubtitle}>Dorm Washing Machine Status</Text>
       </View>
-    </View>
+      <FloorList initialFloors={floors} />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    padding: 24,
+    backgroundColor: '#fff',
   },
-  main: {
-    flex: 1,
-    justifyContent: "center",
-    maxWidth: 960,
-    marginHorizontal: "auto",
+  header: {
+    paddingHorizontal: 16,
+    paddingBottom: 15,
+    paddingTop: 10,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
-  title: {
-    fontSize: 64,
-    fontWeight: "bold",
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
   },
-  subtitle: {
-    fontSize: 36,
-    color: "#38434D",
+  headerSubtitle: {
+    color: '#555',
+    fontSize: 14,
   },
 });

@@ -1,7 +1,7 @@
 {
   "name": "laundrify",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start --clear",
     "android": "expo start --android",
@@ -16,8 +16,9 @@
     "expo": "^52.0.38",
     "expo-constants": "~17.0.8",
     "expo-linking": "~7.0.5",
-    "expo-router": "^4.0.18",
+    "expo-router": "^4.0.19",
     "expo-status-bar": "~2.0.1",
+    "firebase": "^11.5.0",
     "react": "18.3.1",
     "react-native": "0.76.7",
     "react-native-is-edge-to-edge": "^1.1.6",
@@ -28,7 +29,6 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@expo/webpack-config": "^19.0.1",
     "@react-native-community/cli": "^18.0.0",
     "@types/react": "~18.3.12",
     "@types/url-parse": "^1.4.11",

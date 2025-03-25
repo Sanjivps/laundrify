@@ -3,39 +3,17 @@
     "name": "Laundrify",
     "slug": "laundrify",
     "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "scheme": "laundrify",
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.techathon.laundrify",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+      "package": "com.techathon.laundrify"
     },
     "web": {
-      "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": [
-      "expo-router"
-    ],
-    "scheme": "laundrify",
-    "experiments": {
-      "typedRoutes": true,
-      "tsconfigPaths": true
-    },
-    "newArchEnabled": true,
-    "entryPoint": "./index.js"
+    "newArchEnabled": true
   }
-}
+} 

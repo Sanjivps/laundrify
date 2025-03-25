@@ -8,24 +8,33 @@ interface WashingMachineProps {
 }
 
 const WashingMachine: React.FC<WashingMachineProps> = ({ machine, onStatusChange }) => {
-  // Determine if the machine is available or in use
-  const isAvailable = machine.status === 'available';
+  // Determine the status based on the Firebase data
+  const isAvailable = !machine.hasMotion && !machine.hasLaundry;
+  const isRunning = machine.hasMotion;
+  const hasLaundry = machine.hasLaundry;
 
-  // Handle press to toggle the status
-  const handlePress = () => {
-    // Call the parent's onStatusChange function with the new status
-    onStatusChange(machine.id, isAvailable ? 'in use' : 'available');
-  };
+  // Get the appropriate style and status text
+  let statusStyle = styles.available;
+  let statusText = 'Available';
+
+  if (isRunning) {
+    statusStyle = styles.running;
+    statusText = 'Running';
+  } else if (hasLaundry) {
+    statusStyle = styles.hasLaundry;
+    statusText = 'Has Laundry';
+  }
 
   return (
-    <TouchableOpacity onPress={handlePress}>
-      <View style={[styles.container, isAvailable ? styles.available : styles.inUse]}>
-        <Text style={styles.id}>Machine #{machine.id}</Text>
-        <Text style={styles.status}>
-          {isAvailable ? 'Available' : 'In Use'}
-        </Text>
+    <View style={[styles.container, statusStyle]}>
+      <Text style={styles.id}>Machine #{machine.id}</Text>
+      <View style={styles.statusContainer}>
+        <Text style={styles.status}>{statusText}</Text>
+        {hasLaundry && !isRunning && (
+          <Text style={styles.readyText}>Ready for Pickup</Text>
+        )}
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
@@ -44,18 +53,29 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   available: {
-    backgroundColor: '#8FE388', // Green color for available machines
+    backgroundColor: '#8FE388', // Green for available machines
   },
-  inUse: {
-    backgroundColor: '#FF7F7F', // Red color for machines in use
+  running: {
+    backgroundColor: '#FFD700', // Yellow/gold for running machines
+  },
+  hasLaundry: {
+    backgroundColor: '#FF7F7F', // Red for machines with laundry
   },
   id: {
     fontSize: 16,
     fontWeight: 'bold',
   },
+  statusContainer: {
+    alignItems: 'flex-end',
+  },
   status: {
     fontSize: 14,
     fontWeight: '500',
+  },
+  readyText: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 4,
   },
 });
 

@@ -1,34 +1,36 @@
-import React, { useState } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, ScrollView, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import Floor from './Floor';
 import { Floor as FloorType } from '../data/floors';
+import { useLaundry } from '../contexts/LaundryContext';
 
 interface FloorListProps {
   initialFloors: FloorType[];
 }
 
-const FloorList: React.FC<FloorListProps> = ({ initialFloors }) => {
-  // State to keep track of floors data
-  const [floors, setFloors] = useState<FloorType[]>(initialFloors);
+const FloorList: React.FC<FloorListProps> = () => {
+  // Get data from LaundryContext
+  const { floors, loading, error } = useLaundry();
 
-  // Function to update a washing machine's status
-  const handleMachineStatusChange = (floorId: number, machineId: number, newStatus: 'available' | 'in use') => {
-    setFloors(currentFloors => {
-      return currentFloors.map(floor => {
-        if (floor.id === floorId) {
-          // Update the specific washing machine in this floor
-          const updatedMachines = floor.washingMachines.map(machine => {
-            if (machine.id === machineId) {
-              return { ...machine, status: newStatus };
-            }
-            return machine;
-          });
-          return { ...floor, washingMachines: updatedMachines };
-        }
-        return floor;
-      });
-    });
-  };
+  // If data is loading, show a loading indicator
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#4A90E2" />
+        <Text style={styles.loadingText}>Loading laundry machine data...</Text>
+      </View>
+    );
+  }
+
+  // If there was an error, show an error message
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Error: {error}</Text>
+        <Text style={styles.errorSubtext}>Please check your connection and try again.</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -37,7 +39,7 @@ const FloorList: React.FC<FloorListProps> = ({ initialFloors }) => {
           <Floor
             key={floor.id}
             floor={floor}
-            onMachineStatusChange={handleMachineStatusChange}
+            onMachineStatusChange={() => {}} // Kept for compatibility, not used with Firebase
           />
         ))}
       </View>
@@ -52,6 +54,38 @@ const styles = StyleSheet.create({
   },
   floorsContainer: {
     padding: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    padding: 20,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#555',
+    textAlign: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 18,
+    color: '#e74c3c',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  errorSubtext: {
+    fontSize: 16,
+    color: '#555',
+    textAlign: 'center',
   },
 });
 
