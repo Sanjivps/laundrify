@@ -1,92 +1,121 @@
-import React from 'react';
-import { View, ScrollView, StyleSheet, Text, ActivityIndicator } from 'react-native';
-import Floor from './Floor';
-import { Floor as FloorType } from '../data/floors';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import { useLaundry } from '../contexts/LaundryContext';
+import FloorSelector from './FloorSelector';
+import FloorDetails from './FloorDetails';
+import { StyledText } from '../contexts/FontContext';
 
-interface FloorListProps {
-  initialFloors: FloorType[];
-}
+const FloorList: React.FC = () => {
+  const { floors, loading } = useLaundry();
+  const [selectedFloor, setSelectedFloor] = useState('');
+  
+  // Initialize selectedFloor when floors are loaded
+  useEffect(() => {
+    if (floors.length > 0 && !selectedFloor) {
+      setSelectedFloor(floors[0].id.toString());
+    }
+  }, [floors]);
 
-const FloorList: React.FC<FloorListProps> = () => {
-  // Get data from LaundryContext
-  const { floors, loading, error } = useLaundry();
-
-  // If data is loading, show a loading indicator
-  if (loading) {
+  const renderFloor = () => {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4A90E2" />
-        <Text style={styles.loadingText}>Loading laundry machine data...</Text>
+      <View style={styles.card}>
+        <FloorDetails floorId={selectedFloor} />
       </View>
     );
-  }
+  };
 
-  // If there was an error, show an error message
-  if (error) {
+  const selectedFloorObj = floors.find(floor => floor.id.toString() === selectedFloor);
+
+  if (loading) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Error: {error}</Text>
-        <Text style={styles.errorSubtext}>Please check your connection and try again.</Text>
-      </View>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.emptyState}>
+          <StyledText style={styles.emptyText}>Loading floors...</StyledText>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.floorsContainer}>
-        {floors.map(floor => (
-          <Floor
-            key={floor.id}
-            floor={floor}
-            onMachineStatusChange={() => {}} // Kept for compatibility, not used with Firebase
-          />
-        ))}
+    <SafeAreaView style={styles.container}>
+      <View style={styles.selectorContainer}>
+        <FloorSelector
+          floors={floors}
+          selectedFloor={selectedFloor}
+          onSelectFloor={(id) => setSelectedFloor(id)}
+        />
       </View>
-    </ScrollView>
+      
+      {selectedFloorObj ? (
+        <View style={styles.selectedFloorContainer}>
+          <View style={styles.titleContainer}>
+            <StyledText weight="bold" style={styles.floorTitle}>
+              {selectedFloorObj.name}
+            </StyledText>
+          </View>
+          {renderFloor()}
+        </View>
+      ) : floors.length > 0 ? (
+        // This should rarely happen, but just in case
+        <View style={styles.emptyState}>
+          <StyledText style={styles.emptyText}>Select a floor to view machines</StyledText>
+        </View>
+      ) : (
+        <View style={styles.emptyState}>
+          <StyledText style={styles.emptyText}>No floors available</StyledText>
+        </View>
+      )}
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    padding: 12,
   },
-  floorsContainer: {
-    padding: 16,
+  selectorContainer: {
+    marginBottom: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  loadingContainer: {
+  selectedFloorContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    padding: 20,
   },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#555',
-    textAlign: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    padding: 20,
-  },
-  errorText: {
-    fontSize: 18,
-    color: '#e74c3c',
-    fontWeight: 'bold',
-    textAlign: 'center',
+  titleContainer: {
     marginBottom: 10,
+    paddingHorizontal: 6,
   },
-  errorSubtext: {
+  floorTitle: {
+    fontSize: 20,
+    color: '#333',
+  },
+  card: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
     fontSize: 16,
-    color: '#555',
-    textAlign: 'center',
-  },
+    color: '#999',
+  }
 });
 
 export default FloorList; 

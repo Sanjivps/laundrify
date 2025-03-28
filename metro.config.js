@@ -1,5 +1,5 @@
 // Learn more https://docs.expo.io/guides/customizing-metro
-const { getDefaultConfig } = require('expo/metro-config');
+const { getDefaultConfig } = require('@expo/metro-config');
 const { mergeConfig } = require('@react-native/metro-config');
 const path = require('path');
 
@@ -10,7 +10,7 @@ const defaultConfig = getDefaultConfig(__dirname);
 const customConfig = {
   resolver: {
     sourceExts: ['js', 'jsx', 'json', 'ts', 'tsx', 'cjs'],
-    assetExts: ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'psd', 'svg', 'webp', 'ttf'],
+    assetExts: ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'psd', 'svg', 'webp', 'ttf', 'otf'],
     disableHierarchicalLookup: true,
     nodeModulesPaths: [path.resolve(__dirname, 'node_modules')],
     resolveRequest: (context, moduleName, platform) => {

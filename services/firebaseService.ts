@@ -1,6 +1,6 @@
 import { ref, onValue } from 'firebase/database';
 import { database } from '../firebase';
-import { WashingMachine, Floor } from '../data/floors';
+import { Machine, Floor } from '../data/floors';
 
 // Type for the Firebase laundry machine data
 export interface LaundryMachineData {
@@ -10,7 +10,7 @@ export interface LaundryMachineData {
 
 // Function to subscribe to laundry machine updates
 export const subscribeLaundryMachines = (
-  callback: (machines: WashingMachine[]) => void,
+  callback: (machines: Machine[]) => void,
   initialFloors: Floor[]
 ) => {
   // Create a reference to the laundry machine data in the database
@@ -27,13 +27,28 @@ export const subscribeLaundryMachines = (
     
     // For now, apply the same data to all machines as we only have one sensor
     const updatedMachines = initialFloors.flatMap(floor => 
-      floor.washingMachines.map(machine => ({
-        ...machine,
-        hasLaundry: data.haslaundry === 1,
-        hasMotion: data.hasmotion === 1,
-        // Update status based on the data
-        status: (data.haslaundry === 0 && data.hasmotion === 0) ? 'available' : 'in use'
-      }))
+      floor.machines.map(machine => {
+        // Simplified status logic with only three states:
+        // 1. Running (hasLaundry=1, hasMotion=1)
+        // 2. Ready for pickup (hasLaundry=1, hasMotion=0)
+        // 3. Available (hasLaundry=0, hasMotion=0)
+        let newStatus: 'available' | 'in_use' | 'finishing';
+        
+        if (data.haslaundry === 1 && data.hasmotion === 1) {
+          newStatus = 'in_use'; // Machine is running
+        } else if (data.haslaundry === 1 && data.hasmotion === 0) {
+          newStatus = 'finishing'; // Laundry done, ready for pickup
+        } else {
+          newStatus = 'available'; // Machine is free to use
+        }
+        
+        return {
+          ...machine,
+          hasLaundry: data.haslaundry === 1,
+          hasMotion: data.hasmotion === 1,
+          status: newStatus,
+        };
+      })
     );
     
     callback(updatedMachines);

@@ -1,16 +1,21 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FloorList from '../components/FloorList';
-import floors from '../data/floors';
+import AppHeader from '../components/AppHeader';
+import { LinearGradient } from 'expo-linear-gradient';
 
-export default function Home() {
+export default function HomeScreen() {
   return (
-    <SafeAreaView style={styles.container} edges={['bottom']}>
-      <View style={styles.header}>
-        <Text style={styles.headerSubtitle}>Dorm Washing Machine Status</Text>
-      </View>
-      <FloorList initialFloors={floors} />
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <AppHeader />
+      <LinearGradient
+        colors={['#f8f8f8', '#f0f0f0']}
+        style={styles.content}
+      >
+        <FloorList />
+      </LinearGradient>
     </SafeAreaView>
   );
 }
@@ -18,15 +23,11 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
   },
-  header: {
-    paddingHorizontal: 16,
-    paddingBottom: 10,
-    alignItems: 'center',
-  },
-  headerSubtitle: {
-    color: '#555',
-    fontSize: 14,
-  },
+  content: {
+    flex: 1,
+    paddingBottom: 20,
+    paddingTop: 8,
+  }
 }); 

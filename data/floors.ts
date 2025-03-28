@@ -1,55 +1,87 @@
 // Define types for our data
-export interface WashingMachine {
+export interface Machine {
   id: number;
-  hasLaundry: boolean; // 1 = has laundry, 0 = empty
-  hasMotion: boolean;  // 1 = running, 0 = not running
-  status: 'available' | 'in use';
+  type: 'washer' | 'dryer';
+  hasLaundry: boolean; // true = has laundry, false = empty
+  hasMotion: boolean;  // true = running, false = not running
+  status: 'available' | 'in_use' | 'finishing';
+  timeRemaining?: number;
+  number: number; // Machine number
+  notes?: string;
 }
 
 export interface Floor {
   id: number;
   name: string;
-  washingMachines: WashingMachine[];
+  machines: Machine[];
 }
 
-// Array of floor objects with washing machines
-const floors: Floor[] = [
-  {
-    id: 1,
-    name: 'First Floor',
-    washingMachines: [
-      { id: 101, status: 'available', hasLaundry: false, hasMotion: false },
-      { id: 102, status: 'in use', hasLaundry: true, hasMotion: true },
-      { id: 103, status: 'available', hasLaundry: false, hasMotion: false },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Second Floor',
-    washingMachines: [
-      { id: 201, status: 'available', hasLaundry: false, hasMotion: false },
-      { id: 202, status: 'available', hasLaundry: false, hasMotion: false },
-      { id: 203, status: 'in use', hasLaundry: true, hasMotion: true },
-      { id: 204, status: 'in use', hasLaundry: true, hasMotion: true },
-    ],
-  },
-  {
-    id: 3,
-    name: 'Third Floor',
-    washingMachines: [
-      { id: 301, status: 'in use', hasLaundry: true, hasMotion: true },
-      { id: 302, status: 'available', hasLaundry: false, hasMotion: false },
-    ],
-  },
-  {
-    id: 4,
-    name: 'Fourth Floor',
-    washingMachines: [
-      { id: 401, status: 'available', hasLaundry: false, hasMotion: false },
-      { id: 402, status: 'available', hasLaundry: false, hasMotion: false },
-      { id: 403, status: 'available', hasLaundry: false, hasMotion: false },
-    ],
-  },
-];
+// Helper function to create floors with machines
+const createFloors = (numFloors: number, washersPerFloor: number, dryersPerFloor: number): Floor[] => {
+  const floors: Floor[] = [];
+  
+  for (let i = 1; i <= numFloors; i++) {
+    const machines: Machine[] = [];
+    
+    // Add washers (ID format: floor-digit + '0' + machine-number)
+    for (let w = 1; w <= washersPerFloor; w++) {
+      // Create status based on a simple pattern (for demo purposes)
+      let status: Machine['status'] = 'available';
+      
+      // Some machines will be in use or finishing
+      if (w === 1 && i % 3 === 0) status = 'in_use';
+      if (w === 2 && i % 4 === 0) status = 'finishing';
+      
+      // Add time remaining for machines in use
+      const timeRemaining = status === 'in_use' ? 15 + (i * 3) % 20 : undefined;
+      
+      machines.push({
+        id: parseInt(`${i}0${w}`),
+        type: 'washer',
+        hasLaundry: status === 'in_use' || status === 'finishing',
+        hasMotion: status === 'in_use',
+        status: status,
+        timeRemaining: timeRemaining,
+        number: w,
+        notes: undefined
+      });
+    }
+    
+    // Add dryers (ID format: floor-digit + '5' + machine-number)
+    for (let d = 1; d <= dryersPerFloor; d++) {
+      // Create status based on a simple pattern (for demo purposes)
+      let status: Machine['status'] = 'available';
+      
+      // Some machines will be in use or finishing
+      if (d === 1 && i % 4 === 0) status = 'in_use';
+      if (d === 2 && i % 5 === 0) status = 'finishing';
+      
+      // Add time remaining for machines in use
+      const timeRemaining = status === 'in_use' ? 25 + (i * 4) % 30 : undefined;
+      
+      machines.push({
+        id: parseInt(`${i}5${d}`),
+        type: 'dryer',
+        hasLaundry: status === 'in_use' || status === 'finishing',
+        hasMotion: status === 'in_use',
+        status: status,
+        timeRemaining: timeRemaining,
+        number: d,
+        notes: undefined
+      });
+    }
+    
+    floors.push({
+      id: i,
+      name: `Floor ${i}`,
+      machines
+    });
+  }
+  
+  return floors;
+};
+
+// Create 14 floors with 3 washers and 3 dryers each
+const floors: Floor[] = createFloors(14, 3, 3);
 
 export default floors; 
