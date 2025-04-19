@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Laundrify",
+    "slug": "laundrify",
+    "version": "1.0.0",
+    "scheme": "laundrify",
+    "ios": {
+      "bundleIdentifier": "com.techathon.laundrify",
+      "googleServicesFile": "./GoogleService-Info.plist"
+    },
+    "android": {
+      "package": "com.techathon.laundrify"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "newArchEnabled": true,
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ]
+  }
+}
