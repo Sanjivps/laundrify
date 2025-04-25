@@ -1,5 +1,5 @@
-# Laundrify
-
+# Laundrify  
+Pitch Deck that includes demo: https://www.canva.com/design/DAGiw4GsJmk/9gt1QVUpwsCB5pqLwC2JPw/edit?utm_content=DAGiw4GsJmk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
 A React Native mobile application for managing and monitoring laundry machines in a building. Users can check machine availability, receive notifications when their laundry is done, report lost items, and communicate with other users through a chat interface.
 
 ## Features
